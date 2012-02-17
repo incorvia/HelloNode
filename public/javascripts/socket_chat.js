@@ -1,5 +1,7 @@
 $(document).ready(function() {
-    var socket = new io.connect('http://localhost:3080');
+    var socket = new io.connect('http://' + window.location.host);
+
+    console.log(socket)
 
     socket.on('connect', function() {
         socket.send('A client connected.');
