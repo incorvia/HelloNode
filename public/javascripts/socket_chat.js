@@ -3,8 +3,8 @@ $(document).ready(function() {
   Kinetic.Rect.new_box = function(box, user_id, isSelf) {
     if (isSelf) {
       var new_box = new Kinetic.Rect({
-        x: 100,
-        y: 100,
+        x: Math.floor(Math.random()*400),
+        y: Math.floor(Math.random()*150),
         width: 25,
         height: 25,
         fill: "#00D2FF",
