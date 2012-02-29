@@ -12,5 +12,5 @@ exports.index = function(req, res){
  */
 
 exports.hello = function(req, res){
-  res.render('hello', { title: 'Hello Node World' })
+  res.render('hello', { title: 'Hello Node World', room1: 'Room 1', room2: 'Room 2' })
 };

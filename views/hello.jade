@@ -1,6 +1,13 @@
-h1= title
-p Welcome to #{title}
-input(type='text', style='width: 300px;)
-hr
-div#messages
-
+div.container
+  h1= title
+  div.left
+    p #{room1}
+    input.room(type='text', data-room='room1')
+    hr
+    div.msg_box(data-room='room1')
+  div#canvas
+  div.right
+    p #{room2}
+    input.room(type='text', data-room='room2')
+    hr
+    div.msg_box(data-room='room2')

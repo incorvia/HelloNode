@@ -1,8 +1,45 @@
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background: #ddd;
+  margin: 0px;
+}
+
+.container {
+  width: 950px;
+  height: 700px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin-bottom: 30px;
 }
 
 a {
   color: #00B7FF;
+}
+
+input {
+  width: 195px;
+}
+
+.left {
+  float: left;
+  width: 200px;
+  height: 500px;
+  margin-right: 10px;
+}
+
+#canvas {
+  float: left;
+  width: 500px;
+  height: 200px;
+  background-color: #fff;
+  border: 3px solid black;
+ }
+ 
+ .right {
+  float: left;
+  width: 200px;
+  height: 500px;
+  margin-left: 10px;
 }

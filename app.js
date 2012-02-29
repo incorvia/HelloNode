@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -39,17 +38,47 @@ console.log("Express server listening on port %d in %s mode", app.address().port
 // Chat
 
 var chat = io.listen(app);
-var clients = [];
+var clients = {};
 
 chat.sockets.on('connection', function (socket) {
 
-  clients.push(socket);
+  socket.on('setup', function(box) {
+    socket.emit('init_boxes', clients);
 
-  socket.on('message', function (data) {
-    console.log(data);
-    
-    clients.forEach(function(client) {
-       client.send(data); 
-    });
+    eval("clients.client_" + socket.id + "= {}")
+    eval("clients.client_" + socket.id + ".box = box")
+    eval("clients.client_" + socket.id + ".id = socket.id")
+
+    socket.join('room1')
+    eval("chat.sockets.emit('new_box', clients.client_" + socket.id + ")");
+
+    socket.emit('ready')
   });
-});
+
+  socket.on('msg_room', function(room, data) {
+    console.log('hello world');
+    chat.sockets.to(room).emit('new_msg', room, data);
+  });
+
+  socket.on('move_box', function(mousePos) {
+    eval("clients.client_" + socket.id + ".box.x = mousePos.x")
+    eval("clients.client_" + socket.id + ".box.y = mousePos.y")
+
+    eval("chat.sockets.emit('move_box', clients.client_" + socket.id + ", socket.id)");
+  })
+
+  socket.on('disconnect', function() {
+    var removed = 0;
+
+    for (var client in clients) {
+      client = eval("clients." + client)
+
+      if (client.id == socket.id) {
+        removed = client.id;
+        eval("delete clients.client_" + client.id);
+      }
+    };
+
+    chat.sockets.emit('remove_box', removed)
+  });
+ });
