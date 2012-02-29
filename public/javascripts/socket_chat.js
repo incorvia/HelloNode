@@ -1,20 +1,7 @@
 $(document).ready(function() {
 
-  Kinetic.Rect.new_box = function(box, user_id) {
-    if (box.x) {
-      var new_box = new Kinetic.Rect({
-        x: box.x,
-        y: box.y,
-        width: box.width,
-        height: box.height,
-        fill: box.fill,
-        stroke: box.stroke,
-        strokeWidth: box.strokeWidth,
-        draggable: true,
-        name: user_id
-      });
-    }
-    else {
+  Kinetic.Rect.new_box = function(box, user_id, isSelf) {
+    if (isSelf) {
       var new_box = new Kinetic.Rect({
         x: 100,
         y: 100,
@@ -24,6 +11,19 @@ $(document).ready(function() {
         stroke: "black",
         strokeWidth: 4,
         draggable: true,
+        name: user_id
+      });
+    }
+    else {
+      var new_box = new Kinetic.Rect({
+        x: box.x,
+        y: box.y,
+        width: box.width,
+        height: box.height,
+        fill: "#FF00D1",
+        stroke: box.stroke,
+        strokeWidth: box.strokeWidth,
+        draggable: false,
         name: user_id
       });
     };
@@ -36,21 +36,37 @@ $(document).ready(function() {
   layer = new Kinetic.Layer();
   my_box = "";
 
-  boxes = {};
+  var left_line = new Kinetic.Rect({
+    x: 75,
+    width: 5,
+    height: 200,
+    fill: "#D6D6D6",
+  });
+
+  var right_line = new Kinetic.Rect({
+    x: 425,
+    width: 5,
+    height: 200,
+    fill: "#D6D6D6",
+  });
+
+  layer.add(left_line);
+  layer.add(right_line);
 
   // Socket
   var socket = new io.connect('http://' + window.location.host);
 
   socket.on('connect', function() {
-    opt = new Object;
-    box = Kinetic.Rect.new_box(opt);
+    box = Kinetic.Rect.new_box(0, 0, true);
 
      socket.emit('setup', box);
   });
 
   socket.on('new_box', function(client) {
+    isSelf = (socket.socket.sessionid == client.id) ? true : false;
+
     var new_box = "box_" + client.id;
-    eval(new_box + "= Kinetic.Rect.new_box(client.box, client.id)");
+    eval(new_box + "= Kinetic.Rect.new_box(client.box, client.id," + isSelf +")");
 
     layer.add(eval(new_box));
     stage.add(layer);
@@ -61,7 +77,7 @@ $(document).ready(function() {
       client = eval("clients." + client)
 
       var new_box = "box_" + client.id
-      eval(new_box + "= Kinetic.Rect.new_box(client.box, client.id)");
+      eval(new_box + "= Kinetic.Rect.new_box(client.box, client.id, false)");
 
       layer.add(eval(new_box));
       stage.add(layer);
@@ -88,9 +104,10 @@ $(document).ready(function() {
   socket.on('ready', function(data) {
     my_box = layer.getChild(socket.socket.sessionid)
 
-    my_box.on("dragmove", function() {
+    my_box.on("dragmove", function(room) {
       var mousePos = stage.getMousePosition();
       socket.emit('move_box', mousePos);
+
     });
   });
 

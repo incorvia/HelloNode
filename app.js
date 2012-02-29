@@ -49,7 +49,6 @@ chat.sockets.on('connection', function (socket) {
     eval("clients.client_" + socket.id + ".box = box")
     eval("clients.client_" + socket.id + ".id = socket.id")
 
-    socket.join('room1')
     eval("chat.sockets.emit('new_box', clients.client_" + socket.id + ")");
 
     socket.emit('ready')
@@ -65,7 +64,19 @@ chat.sockets.on('connection', function (socket) {
     eval("clients.client_" + socket.id + ".box.y = mousePos.y")
 
     eval("chat.sockets.emit('move_box', clients.client_" + socket.id + ", socket.id)");
-  })
+
+    if (mousePos.x < 75) {
+        socket.join('room1')
+      }
+      else if (mousePos.x > 425) {
+        socket.join('room2')
+      }
+      else {
+        socket.leave('room1')
+        socket.leave('room2')
+      }
+
+  });
 
   socket.on('disconnect', function() {
     var removed = 0;
