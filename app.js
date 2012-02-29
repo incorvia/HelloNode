@@ -60,21 +60,28 @@ chat.sockets.on('connection', function (socket) {
   });
 
   socket.on('move_box', function(mousePos) {
+    var room;
+
     eval("clients.client_" + socket.id + ".box.x = mousePos.x")
     eval("clients.client_" + socket.id + ".box.y = mousePos.y")
 
     eval("chat.sockets.emit('move_box', clients.client_" + socket.id + ", socket.id)");
 
     if (mousePos.x < 75) {
-        socket.join('room1')
-      }
-      else if (mousePos.x > 425) {
-        socket.join('room2')
-      }
-      else {
-        socket.leave('room1')
-        socket.leave('room2')
-      }
+      socket.join('room1')
+      room = 'room1';
+    }
+    else if (mousePos.x > 425) {
+      socket.join('room2')
+      room = 'room2';
+    }
+    else {
+      socket.leave('room1')
+      socket.leave('room2')
+      room = '';
+    }
+
+    socket.emit('change room', room);
 
   });
 

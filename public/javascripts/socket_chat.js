@@ -35,6 +35,7 @@ $(document).ready(function() {
   stage = new Kinetic.Stage("canvas", 500, 200);
   layer = new Kinetic.Layer();
   my_box = "";
+  my_room = "";
 
   var left_line = new Kinetic.Rect({
     x: 75,
@@ -101,6 +102,10 @@ $(document).ready(function() {
       console.log(socket);
   });
 
+  socket.on('change room', function (room) {
+    my_room = room;
+  });
+
   socket.on('ready', function(data) {
     my_box = layer.getChild(socket.socket.sessionid)
 
@@ -122,13 +127,15 @@ $(document).ready(function() {
 
   // JQuery
   $('.room').keydown(function(event) {
-      if(event.keyCode === 13) {
-        var room = $(this).attr('data-room')
-        var msg = $(this).val()
+    if(event.keyCode === 13) {
+      var typed_room = $(this).attr('data-room')
+      var msg = $(this).val()
 
-        socket.emit("msg_room", room, msg);
+      if (my_room == typed_room) {
+        socket.emit("msg_room", typed_room, msg);
         $(this).val('');
       }
+    }
   });
 });
 
